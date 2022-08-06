@@ -11,6 +11,9 @@ def lex_line(line: str) -> list[str]:
             case "work":
                 tokens.append("WRK")
 
+            case "item":
+                tokens.append("ITM")
+
             case _:
                 tokens.append("IDF:" + candidate)
 

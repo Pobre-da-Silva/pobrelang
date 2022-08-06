@@ -4,8 +4,13 @@ import time
 
 from pobrelanglib import quotes
 
+variables: dict[str, str] = {}
+
 def is_token(candidate: str, token: str) -> bool:
     return candidate.startswith(token)
+
+def extract_identifier(token: str) -> str:
+    return token.split(":", 1)[1]
 
 def parse_line(line: list[str]) -> None:
     if len(line) < 1:
@@ -25,8 +30,13 @@ def parse_line(line: list[str]) -> None:
                 logging.error(quotes.lt_quote("pass the wrong token to the work keyword"))
                 sys.exit()
 
+            work_hours = 0
+
             try:
-                work_hours = eval(line[1].split(":", 1)[1])
+                if extract_identifier(line[1]) in variables:
+                    work_hours = eval(variables[extract_identifier(line[1])])
+                else:
+                    work_hours = eval(extract_identifier(line[1]))
 
                 if work_hours < 0:
                     raise
@@ -50,7 +60,17 @@ def parse_line(line: list[str]) -> None:
                 logging.error(quotes.lt_quote("pass the wrong token to the scream keyword"))
                 sys.exit()
 
-            print(line[1].split(":", 1)[1])
+            if extract_identifier(line[1]) in variables:
+                print(variables[extract_identifier(line[1])])
+            else:
+                print(extract_identifier(line[1]))
+
+        case "ITM":
+            if not len(line) == 3 or not is_token(line[1], "IDF") and is_token(line[2], "IDF"):
+                logging.error(quotes.lt_quote("create a variable like this"))
+                sys.exit()
+
+            variables[extract_identifier(line[1])] = extract_identifier(line[2])
 
         case _:
             logging.error(quotes.lt_quote("start an expression without a keyword"))
