@@ -3,12 +3,14 @@
 import logging
 import sys
 
+from pobrelanglib import quotes
+
 if not __name__ == "__main__":
-    logging.error("PobreLang is NOT a library and should not be run as such!");
+    logging.error(quotes.lt_quote("run PobreLang as a library"))
     sys.exit()
 
 if not len(sys.argv) == 2:
-    logging.error("Incorrect number of arguments! Please specify a filename!");
+    logging.error(quotes.lt_quote("not specify a filename to the interpreter"))
     sys.exit()
 
 filename = sys.argv[1]
@@ -19,5 +21,5 @@ try:
         while line := file.readline():
             print(line)
 except:
-    logging.error("File not found!")
+    logging.error(quotes.lt_quote("pass an unexisting file to the interpreter"))
     sys.exit()
