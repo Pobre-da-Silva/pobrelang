@@ -23,7 +23,7 @@ def parse_line(line: list[str]) -> None:
                 sys.exit()
 
             if len(line) > 2:
-                logging.error(quotes.lt_quote("pass to many parameters to the work keyword"))
+                logging.error(quotes.lt_quote("pass too many parameters to the work keyword"))
                 sys.exit()
 
             if not is_token(line[1], "IDF"):
@@ -52,18 +52,27 @@ def parse_line(line: list[str]) -> None:
                 logging.error(quotes.lt_quote("not pass any parameters to the scream keyword"))
                 sys.exit()
 
-            if len(line) > 2:
-                logging.error(quotes.lt_quote("pass to many parameters to the scream keyword"))
-                sys.exit()
+            for i in range(len(line)):
+                if i == 0:
+                    continue
 
-            if not is_token(line[1], "IDF"):
-                logging.error(quotes.lt_quote("pass the wrong token to the scream keyword"))
-                sys.exit()
+                if not is_token(line[i], "IDF"):
+                    logging.error(quotes.lt_quote("pass the wrong token to the scream keyword"))
+                    sys.exit()
 
-            if extract_identifier(line[1]) in variables:
-                print(variables[extract_identifier(line[1])])
-            else:
-                print(extract_identifier(line[1]))
+            for i in range(len(line)):
+                if i == 0:
+                    continue
+
+                if extract_identifier(line[i]) in variables:
+                    print(variables[extract_identifier(line[i])], end = "")
+                else:
+                    print(extract_identifier(line[i]), end = "")
+
+                if not i == len(line) - 1:
+                    print(" ", end = "")
+
+            print()
 
         case "ITM":
             if not len(line) == 3 or not is_token(line[1], "IDF") and is_token(line[2], "IDF"):
