@@ -22,6 +22,6 @@ def lex_line(line: str) -> list[str]:
 
             case _:
                 if not candidate == "":
-                    tokens.append("IDF:" + candidate)
+                    tokens.append("EXP:" + candidate)
 
     return tokens

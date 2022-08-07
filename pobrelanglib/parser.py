@@ -13,6 +13,31 @@ def is_token(candidate: str, token: str) -> bool:
 def extract_identifier(token: str) -> str:
     return token.split(":", 1)[1]
 
+def parse_math(expression: str) -> str:
+    operators = [
+        "+", "-", "*", "/", "%", "=", "!", ">", "<", "&", "|", "^", "~"
+    ]
+
+    identifier: str = ""
+    identifiers: list[str] = []
+
+    for c in expression:
+        if not c in operators:
+            identifier += c
+        else:
+            if not identifier == "":
+                try:
+                    float(identifier)
+                except:
+                    identifiers.append(identifier)
+
+                identifier = ""
+
+    for id in identifiers:
+        expression = expression.replace(id, variables[id])
+
+    return str(eval(expression))
+
 def parse_line(line: list[str]) -> None:
     global variables, money
 
@@ -29,7 +54,7 @@ def parse_line(line: list[str]) -> None:
                 logging.error(quotes.lt_quote("pass too many parameters to the work keyword"))
                 sys.exit()
 
-            if not is_token(line[1], "IDF"):
+            if not is_token(line[1], "EXP"):
                 logging.error(quotes.lt_quote("pass the wrong token to the work keyword"))
                 sys.exit()
 
@@ -37,9 +62,9 @@ def parse_line(line: list[str]) -> None:
 
             try:
                 if extract_identifier(line[1]) in variables:
-                    work_hours = eval(variables[extract_identifier(line[1])])
+                    work_hours = float(parse_math(variables[extract_identifier(line[1])]))
                 else:
-                    work_hours = eval(extract_identifier(line[1]))
+                    work_hours = float(parse_math(extract_identifier(line[1])))
 
                 if work_hours < 0:
                     raise
@@ -67,7 +92,7 @@ def parse_line(line: list[str]) -> None:
                 if i == 0:
                     continue
 
-                if not is_token(line[i], "IDF"):
+                if not is_token(line[i], "EXP"):
                     logging.error(quotes.lt_quote("pass a wrong token to the scream keyword"))
                     sys.exit()
 
@@ -85,8 +110,8 @@ def parse_line(line: list[str]) -> None:
 
             print()
 
-        case "ITM":
-            if not len(line) == 3 or not is_token(line[1], "IDF") and is_token(line[2], "IDF"):
+        case "EXP":
+            if not len(line) == 3 or not is_token(line[1], "EXP") and is_token(line[2], "EXP"):
                 logging.error(quotes.lt_quote("create a variable like this"))
                 sys.exit()
 
@@ -99,7 +124,7 @@ def parse_line(line: list[str]) -> None:
                 sys.exit()
 
             try:
-                variables[extract_identifier(line[1])] = eval(extract_identifier(line[2]))
+                variables[extract_identifier(line[1])] = pare_math(extract_identifier(line[2]))
             except:
                 logging.error("try to create a variable with an invalid expression")
                 sys.exit()
@@ -107,7 +132,7 @@ def parse_line(line: list[str]) -> None:
             money -= 0.0001
 
         case "TAG":
-            if not len(line) == 3 or not is_token(line[1], "IDF") and is_token(line[2], "IDF"):
+            if not len(line) == 3 or not is_token(line[1], "EXP") and is_token(line[2], "EXP"):
                 logging.error(quotes.lt_quote("create a variable like this"))
                 sys.exit()
 
