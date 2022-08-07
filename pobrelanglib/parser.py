@@ -68,7 +68,7 @@ def parse_line(line: list[str]) -> None:
                     continue
 
                 if not is_token(line[i], "IDF"):
-                    logging.error(quotes.lt_quote("pass the wrong token to the scream keyword"))
+                    logging.error(quotes.lt_quote("pass a wrong token to the scream keyword"))
                     sys.exit()
 
             for i in range(len(line)):
@@ -86,6 +86,23 @@ def parse_line(line: list[str]) -> None:
             print()
 
         case "ITM":
+            if not len(line) == 3 or not is_token(line[1], "IDF") and is_token(line[2], "IDF"):
+                logging.error(quotes.lt_quote("create a variable like this"))
+                sys.exit()
+
+            if money - 0.0001 < 0:
+                logging.error(quotes.lt_quote("try to create a variable with no money"))
+                sys.exit()
+
+            try:
+                variables[extract_identifier(line[1])] = eval(extract_identifier(line[2]))
+            except:
+                logging.error("try to create a variable with an invalid expression")
+                sys.exit()
+
+            money -= 0.0001
+
+        case "TAG":
             if not len(line) == 3 or not is_token(line[1], "IDF") and is_token(line[2], "IDF"):
                 logging.error(quotes.lt_quote("create a variable like this"))
                 sys.exit()
