@@ -94,6 +94,10 @@ def parse_line(line: list[str]) -> None:
                 logging.error(quotes.lt_quote("try to create a variable with no money"))
                 sys.exit()
 
+            if not extract_identifier(line[1]).startswith("PobreLang/"):
+                logging.error(quotes.rms_quote(extract_identifier(line[1])))
+                sys.exit()
+
             try:
                 variables[extract_identifier(line[1])] = eval(extract_identifier(line[2]))
             except:
@@ -109,6 +113,10 @@ def parse_line(line: list[str]) -> None:
 
             if money - 0.0001 < 0:
                 logging.error(quotes.lt_quote("try to create a variable with no money"))
+                sys.exit()
+
+            if not extract_identifier(line[1]).startswith("PobreLang/"):
+                logging.error(quotes.rms_quote(extract_identifier(line[1])))
                 sys.exit()
 
             variables[extract_identifier(line[1])] = extract_identifier(line[2])
