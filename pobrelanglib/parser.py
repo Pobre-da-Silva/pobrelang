@@ -97,6 +97,9 @@ def parse_line(line: list[str]) -> None:
             variables[extract_identifier(line[1])] = extract_identifier(line[2])
             money -= 0.0001
 
+        case "NTE":
+            pass
+
         case _:
             logging.error(quotes.lt_quote("start an expression without a keyword"))
             sys.exit()
