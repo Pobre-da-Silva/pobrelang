@@ -5,6 +5,7 @@ import time
 from pobrelanglib import quotes
 
 variables: dict[str, str] = {}
+money: float = 0
 
 def is_token(candidate: str, token: str) -> bool:
     return candidate.startswith(token)
@@ -13,6 +14,8 @@ def extract_identifier(token: str) -> str:
     return token.split(":", 1)[1]
 
 def parse_line(line: list[str]) -> None:
+    global variables, money
+
     if len(line) < 1:
         return
 
@@ -47,6 +50,11 @@ def parse_line(line: list[str]) -> None:
             print(f"Working for {work_hours} h / {work_hours * 60} min / {work_hours * 60 * 60} sec.")
             time.sleep(work_hours * 60 * 60)
 
+            # 4 money per work hour
+            money += work_hours * 4
+
+            print(f"Current money: {money}.")
+
         case "SCR":
             if len(line) < 2:
                 logging.error(quotes.lt_quote("not pass any parameters to the scream keyword"))
@@ -79,7 +87,12 @@ def parse_line(line: list[str]) -> None:
                 logging.error(quotes.lt_quote("create a variable like this"))
                 sys.exit()
 
+            if money - 0.001 < 0:
+                logging.error(quotes.lt_quote("try to create a variable with no money"))
+                sys.exit()
+
             variables[extract_identifier(line[1])] = extract_identifier(line[2])
+            money -= 0.001
 
         case _:
             logging.error(quotes.lt_quote("start an expression without a keyword"))
