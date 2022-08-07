@@ -1,5 +1,5 @@
 def lex_line(line: str) -> list[str]:
-    line = line.replace("\n", "")
+    line = line.replace("\n", "").replace("\t", "")
     token_candidates = line.split(" ")
     tokens: list[str] = []
 
@@ -21,6 +21,7 @@ def lex_line(line: str) -> list[str]:
                 tokens.append("NTE")
 
             case _:
-                tokens.append("IDF:" + candidate)
+                if not candidate == "":
+                    tokens.append("IDF:" + candidate)
 
     return tokens
