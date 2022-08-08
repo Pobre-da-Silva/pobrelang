@@ -106,26 +106,29 @@ def parse_line(line: list[str]) -> None:
             if not len(line) == 3 or not (is_token(line[1], "EXP") and is_token(line[2], "EXP")):
                 lt_panic("create a variable like this")
 
-            try:
-                assert money - variable_cost > 0
-            except AssertionError:
-                lt_panic("try to create a variable with no money")
+            variable_name = extract_expression(line[1])
 
-            if not extract_expression(line[1]).startswith("PobreLang/"):
-                logging.error(quotes.rms_quote(extract_expression(line[1])))
+            if not variable_name.startswith("PobreLang/"):
+                logging.error(quotes.rms_quote(variable_name))
                 sys.exit()
 
-            money -= variable_cost
+            if not variable_name in variables:
+                try:
+                    assert money - variable_cost > 0
+                except AssertionError:
+                    lt_panic("try to create a variable with no money")
+
+                money -= variable_cost
 
             match line[0]:
                 case "ITM":
                     try:
-                        variables[extract_expression(line[1])] = parse_math(extract_expression(line[2]))
+                        variables[variable_name] = parse_math(extract_expression(line[2]))
                     except (NameError, SyntaxError):
                         lt_panic("try to create a variable with an invalid expression")
 
                 case "TAG":
-                    variables[extract_expression(line[1])] = extract_expression(line[2])
+                    variables[variable_name] = extract_expression(line[2])
 
         case "NTE":
             pass
