@@ -18,6 +18,12 @@ def lex_line(line: str) -> list[str]:
             case "tag":
                 tokens.append("TAG")
 
+            case "stamp":
+                tokens.append("STM")
+
+            case "sprint":
+                tokens.append("SPR")
+
             case "note":
                 tokens.append("NTE")
 

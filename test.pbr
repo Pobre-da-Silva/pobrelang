@@ -1,3 +1,4 @@
+
 work 0.003
 
 item PobreLang/shit 3
@@ -19,6 +20,8 @@ item PobreLang/shit 3
 item PobreLang/shit 3
 item PobreLang/shit 3
 
-work PobreLang/shit+3
-
+stamp PobreLang/shit
 scream Hello world!
+sprint PobreLang/shit
+
+work PobreLang/shit+3

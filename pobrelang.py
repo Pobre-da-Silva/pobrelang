@@ -16,12 +16,18 @@ if not len(sys.argv) == 2:
 from pobrelanglib import lexer, parser
 
 filename = sys.argv[1]
-raw_code: str
+file_content: list[str] = []
 
 try:
     with open(filename) as file:
         while line := file.readline():
-            parser.parse_line(lexer.lex_line(line))
+            file_content.append(line)
 except IOError:
     logging.error(quotes.lt_quote("pass an unexisting file to the interpreter"))
     sys.exit()
+
+del filename
+
+while not parser.line_number == len(file_content):
+    parser.line_number += 1
+    parser.parse_line(lexer.lex_line(file_content[parser.line_number]))

@@ -7,6 +7,8 @@ from pobrelanglib import quotes
 variables: dict[str, str] = {}
 money: float = 0.0
 variable_cost: float = 0.0001
+line_number: int = 0
+stamps: dict[str, int] = {}
 
 def lt_panic(idea: str) -> None:
     logging.error(quotes.lt_quote(idea))
@@ -24,8 +26,33 @@ def parse_math(expr: str) -> str:
 
     return str(eval(expr))
 
-def parse_line(line: list[str]) -> None:
+def create_variable(type: str, name: str, value: str) -> None:
     global variables, money
+
+    if not name.startswith("PobreLang/"):
+        logging.error(quotes.rms_quote(name))
+        sys.exit()
+
+    if not name in variables:
+        try:
+            assert money - variable_cost > 0
+        except AssertionError:
+            lt_panic("try to create a variable with no money")
+
+        money -= variable_cost
+
+    match type:
+        case "ITM":
+            try:
+                variables[name] = parse_math(value)
+            except (NameError, SyntaxError):
+                lt_panic("try to create a variable with an invalid expression")
+
+        case "TAG":
+            variables[name] = value
+
+def parse_line(line: list[str]) -> None:
+    global money, variables, stamps, line_number
 
     # empty line
     if len(line) < 1:
@@ -106,29 +133,38 @@ def parse_line(line: list[str]) -> None:
             if not len(line) == 3 or not (is_token(line[1], "EXP") and is_token(line[2], "EXP")):
                 lt_panic("create a variable like this")
 
-            variable_name = extract_expression(line[1])
+            create_variable(line[0], extract_expression(line[1]), extract_expression(line[2]))
 
-            if not variable_name.startswith("PobreLang/"):
-                logging.error(quotes.rms_quote(variable_name))
+        case "STM":
+            if not len(line) == 2 or not is_token(line[1], "EXP"):
+                lt_panic("create a stamp in this stupid way")
+
+            name = extract_expression(line[1])
+
+            if not name.startswith("PobreLang/"):
+                logging.error(quotes.rms_quote(name))
                 sys.exit()
 
-            if not variable_name in variables:
+            if not name in stamps:
                 try:
                     assert money - variable_cost > 0
                 except AssertionError:
-                    lt_panic("try to create a variable with no money")
+                    lt_panic("try to create a stamp with no money")
 
                 money -= variable_cost
 
-            match line[0]:
-                case "ITM":
-                    try:
-                        variables[variable_name] = parse_math(extract_expression(line[2]))
-                    except (NameError, SyntaxError):
-                        lt_panic("try to create a variable with an invalid expression")
+            stamps[name] = line_number
 
-                case "TAG":
-                    variables[variable_name] = extract_expression(line[2])
+        case "SPR":
+            if not len(line) == 2 or not is_token(line[1], "EXP"):
+                lt_panic("try to sprint not knowing where to")
+
+            stamp = extract_expression(line[1])
+
+            if not stamp in stamps:
+                lt_panic("sprint to a non-existing stamp")
+
+            line_number = stamps[stamp]
 
         case "NTE":
             pass
