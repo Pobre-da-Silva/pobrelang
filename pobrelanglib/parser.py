@@ -129,6 +129,24 @@ def parse_line(line: list[str]) -> None:
             # just a line break
             print()
 
+        case "LST" | "ADM":
+            if not len(line) == 2 or not is_token(line[1], "EXP"):
+                lt_panic("not learn how to use the input keywords correctly")
+
+            var = extract_expression(line[1])
+
+            if not var in variables:
+                lt_panic("read user input into a non-existing variable")
+
+            match line[0]:
+                case "LST":
+                    variables[var] = input()
+                case "ADM":
+                    try:
+                        variables[var] = parse_math(input())
+                    except (NameError, SyntaxError):
+                        lt_panic("input an invalid expression to the parser")
+
         case "ITM" | "TAG":
             if not len(line) == 3 or not (is_token(line[1], "EXP") and is_token(line[2], "EXP")):
                 lt_panic("create a variable like this")

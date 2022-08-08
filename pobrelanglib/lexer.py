@@ -9,6 +9,12 @@ def lex_line(line: str) -> list[str]:
             case "scream":
                 tokens.append("SCR")
 
+            case "listen":
+                tokens.append("LST")
+
+            case "antidisestablishmentarianism":
+                tokens.append("ADM")
+
             case "work":
                 tokens.append("WRK")
 
