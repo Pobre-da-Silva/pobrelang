@@ -21,7 +21,7 @@ item PobreLang/shit 3
 item PobreLang/shit 3
 
 stamp PobreLang/shit
-scream Hello world!
-sprint PobreLang/shit
+	scream Hello world!
+	if 1 PobreLang/shit
 
 work PobreLang/shit+3

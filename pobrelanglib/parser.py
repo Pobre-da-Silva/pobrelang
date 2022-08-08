@@ -166,6 +166,28 @@ def parse_line(line: list[str]) -> None:
 
             line_number = stamps[stamp]
 
+        case "IFS":
+            if not len(line) == 3 or not (is_token(line[1], "EXP") and is_token(line[2], "EXP")):
+                lt_panic("create an if statement with this structure")
+
+            condition = extract_expression(line[1])
+            stamp = extract_expression(line[2])
+
+            if not stamp in stamps:
+                lt_panic("not pass a valid stamp to an if statement")
+
+            condition_result = 0
+
+            try:
+                condition_result = parse_math(condition)
+            except (NameError, SyntaxError):
+                lt_panic("pass an invalid expression to an if statement")
+
+            del condition
+
+            if condition_result == True or not condition_result == 0:
+                line_number = stamps[stamp]
+
         case "NTE":
             pass
 
