@@ -27,6 +27,9 @@ def lex_line(line: str) -> list[str]:
             case "if":
                 tokens.append("IFS")
 
+            case "burn":
+                tokens.append("BRN")
+
             case "note":
                 tokens.append("NTE")
 

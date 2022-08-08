@@ -21,6 +21,8 @@ item PobreLang/shit 3
 
 stamp PobreLang/shit
 	scream Hello world!
-	if 1 PobreLang/shit
+	if 1>3 PobreLang/shit
+
+burn PobreLang/shit
 
 work PobreLang/shit+3

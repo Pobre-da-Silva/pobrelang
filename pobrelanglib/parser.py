@@ -24,7 +24,7 @@ def parse_math(expr: str) -> str:
     for var, val in variables.items():
         expr = expr.replace(var, val)
 
-    return str(eval(expr))
+    return str(float(eval(expr)))
 
 def create_variable(type: str, name: str, value: str) -> None:
     global variables, money
@@ -179,14 +179,23 @@ def parse_line(line: list[str]) -> None:
             condition_result = 0
 
             try:
-                condition_result = parse_math(condition)
+                condition_result = bool(float(parse_math(condition)))
             except (NameError, SyntaxError):
                 lt_panic("pass an invalid expression to an if statement")
 
             del condition
 
-            if condition_result == True or not condition_result == 0:
+            if condition_result == True:
                 line_number = stamps[stamp]
+
+        case "BRN":
+            if not len(line) == 2 or not is_token(line[1], "EXP"):
+                lt_panic("try to delete a variable without knowing how to use the burn keyword")
+
+            try:
+                variables.pop(extract_expression(line[1]))
+            except KeyError:
+                lt_panic("try to delete a variable that does not exist")
 
         case "NTE":
             pass
