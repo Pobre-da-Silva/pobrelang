@@ -30,4 +30,4 @@ del filename
 
 while not parser.line_number == len(file_content):
     parser.line_number += 1
-    parser.parse_line(lexer.lex_line(file_content[parser.line_number]))
+    parser.parse_line(lexer.lex_line(file_content[parser.line_number - 1]))
