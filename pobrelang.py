@@ -28,6 +28,23 @@ except IOError:
 
 del filename
 
-while not parser.line_number == len(file_content):
-    parser.line_number += 1
+def iterate_file_content(activity) -> None:
+    while not parser.line_number == len(file_content):
+        parser.line_number += 1
+        activity()
+
+def process_stamps() -> None:
+    line = file_content[parser.line_number - 1]
+
+    line_tokens = lexer.lex_line(line)
+
+    if len(line_tokens) > 0 and parser.is_token(line_tokens[0], "STM"):
+        parser.parse_line(line_tokens)
+
+def parse_linearly() -> None:
     parser.parse_line(lexer.lex_line(file_content[parser.line_number - 1]))
+
+iterate_file_content(process_stamps)
+del process_stamps
+parser.line_number = 0
+iterate_file_content(parse_linearly)

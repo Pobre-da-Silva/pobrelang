@@ -163,14 +163,6 @@ def parse_line(line: list[str]) -> None:
                 logging.error(quotes.rms_quote(name))
                 sys.exit()
 
-            if not name in stamps:
-                try:
-                    assert money - variable_cost > 0
-                except AssertionError:
-                    lt_panic("try to create a stamp with no money")
-
-                money -= variable_cost
-
             stamps[name] = line_number
 
         case "SPR":
