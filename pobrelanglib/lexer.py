@@ -6,6 +6,9 @@ def lex_line(line: str) -> list[str]:
 
     for candidate in token_candidates:
         match candidate:
+            case "include":
+                tokens.append("INC")
+            
             case "scream":
                 tokens.append("SCR")
 
@@ -35,6 +38,12 @@ def lex_line(line: str) -> list[str]:
 
             case "burn":
                 tokens.append("BRN")
+
+            case "dispull":
+                tokens.append("DSP")
+
+            case "goback":
+                tokens.append("GBK")
 
             case "note":
                 tokens.append("NTE")

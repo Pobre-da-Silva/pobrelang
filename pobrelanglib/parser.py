@@ -3,12 +3,13 @@ import sys
 import time
 
 from pobrelanglib import quotes
+from pobrelanglib.module import Module
+from pobrelanglib import module as modlib
 
-variables: dict[str, str] = {}
 money: float = 0.0
 variable_cost: float = 0.0001
-line_number: int = 0
-stamps: dict[str, int] = {}
+
+callstack: list[tuple[Module, int]] = []
 
 def lt_panic(idea: str) -> None:
     logging.error(quotes.lt_quote(idea))
@@ -20,20 +21,20 @@ def is_token(candidate: str, token: str) -> bool:
 def extract_expression(token: str) -> str:
     return token.split(":", 1)[1]
 
-def parse_math(expr: str) -> str:
-    for var, val in variables.items():
+def parse_math(expr: str, module: Module) -> str:
+    for var, val in module.variables.items():
         expr = expr.replace(var, val)
 
     return str(float(eval(expr)))
 
-def create_variable(type: str, name: str, value: str) -> None:
-    global variables, money
+def create_variable(type: str, name: str, value: str, module: Module) -> None:
+    global money
 
     if not name.startswith("PobreLang/"):
         logging.error(quotes.rms_quote(name))
         sys.exit()
 
-    if not name in variables:
+    if not name in module.variables and not module.name.startswith("std"):
         try:
             assert money - variable_cost > 0
         except AssertionError:
@@ -44,21 +45,50 @@ def create_variable(type: str, name: str, value: str) -> None:
     match type:
         case "ITM":
             try:
-                variables[name] = parse_math(value)
+                module.variables[name] = parse_math(value, module)
             except (NameError, SyntaxError):
                 lt_panic("try to create a variable with an invalid expression")
 
         case "TAG":
-            variables[name] = value
+            module.variables[name] = value
 
-def parse_line(line: list[str]) -> None:
-    global money, variables, stamps, line_number
+def goto(module: Module, line: list[str], use_callstack: bool = False) -> None:
+    if not len(line) == 2 or not is_token(line[1], "EXP"):
+        lt_panic("try to sprint not knowing where to")
+
+    stamp = extract_expression(line[1])
+    stm_mod = None
+
+    for mod in modlib.included_modules:
+        for st in mod.stamps:
+            #print(stamp +" -> " + st)
+            if st == stamp:
+                stm_mod = mod
+                break
+
+    if stm_mod == None:
+        lt_panic("sprint to a non-existing stamp")
+
+    modlib.current_module = stm_mod
+    stm_mod.line_number = stm_mod.stamps[stamp]
+    
+    if use_callstack: callstack.append((module, module.line_number))
+
+def parse_line(line: list[str], module: Module) -> None:
+    global money
 
     # empty line
     if len(line) < 1:
         return
 
     match line[0]:
+        case "INC":
+            if len(line) < 2:
+                lt_panic("not learn to include libraries")
+            
+            if not modlib.include_module(extract_expression(line[1])):
+                lt_panic("include a module that does not exists")
+
         case "WRK":
             try:
                 assert len(line) == 2
@@ -70,10 +100,10 @@ def parse_line(line: list[str]) -> None:
             try:
                 expr = extract_expression(line[1])
 
-                if expr in variables:
-                    work_hours = float(parse_math(variables[expr]))
+                if expr in module.variables:
+                    work_hours = float(parse_math(module.variables[expr], module))
                 else:
-                    work_hours = float(parse_math(expr))
+                    work_hours = float(parse_math(expr, module))
 
                 del expr
 
@@ -117,8 +147,8 @@ def parse_line(line: list[str]) -> None:
 
                 expr = extract_expression(line[i])
 
-                if expr in variables:
-                    print(variables[expr], end = "")
+                if expr in module.variables:
+                    print(module.variables[expr], end = "")
                 else:
                     print(extract_expression(line[i]), end = "")
 
@@ -135,15 +165,15 @@ def parse_line(line: list[str]) -> None:
 
             var = extract_expression(line[1])
 
-            if not var in variables:
+            if not var in module.variables:
                 lt_panic("read user input into a non-existing variable")
 
             match line[0]:
                 case "LST":
-                    variables[var] = input()
+                    module.variables[var] = input()
                 case "ADM":
                     try:
-                        variables[var] = parse_math(input())
+                        module.variables[var] = parse_math(input(), module)
                     except (NameError, SyntaxError):
                         lt_panic("input an invalid expression to the parser")
 
@@ -151,7 +181,7 @@ def parse_line(line: list[str]) -> None:
             if not len(line) == 3 or not (is_token(line[1], "EXP") and is_token(line[2], "EXP")):
                 lt_panic("create a variable like this")
 
-            create_variable(line[0], extract_expression(line[1]), extract_expression(line[2]))
+            create_variable(line[0], extract_expression(line[1]), extract_expression(line[2]), module)
 
         case "STM":
             if not len(line) == 2 or not is_token(line[1], "EXP"):
@@ -163,18 +193,20 @@ def parse_line(line: list[str]) -> None:
                 logging.error(quotes.rms_quote(name))
                 sys.exit()
 
-            stamps[name] = line_number
+            module.stamps[name] = module.line_number
 
         case "SPR":
-            if not len(line) == 2 or not is_token(line[1], "EXP"):
-                lt_panic("try to sprint not knowing where to")
+            goto(module, line)
+        
+        case "DSP":
+            goto(module, line, True)
 
-            stamp = extract_expression(line[1])
-
-            if not stamp in stamps:
-                lt_panic("sprint to a non-existing stamp")
-
-            line_number = stamps[stamp]
+        case "GBK":
+            if len(callstack) > 0:
+                item = callstack.pop()
+                mod = item[0]
+                mod.line_number = item[1]
+                modlib.current_module = mod
 
         case "IFS":
             if not len(line) == 3 or not (is_token(line[1], "EXP") and is_token(line[2], "EXP")):
@@ -183,27 +215,28 @@ def parse_line(line: list[str]) -> None:
             condition = extract_expression(line[1])
             stamp = extract_expression(line[2])
 
-            if not stamp in stamps:
+            if not stamp in module.stamps:
                 lt_panic("not pass a valid stamp to an if statement")
 
             condition_result = 0
 
             try:
-                condition_result = bool(float(parse_math(condition)))
+                condition_result = bool(float(parse_math(condition, module = module)))
             except (NameError, SyntaxError):
                 lt_panic("pass an invalid expression to an if statement")
 
             del condition
 
             if condition_result == True:
-                line_number = stamps[stamp]
+                module.last_line = module.line_number
+                module.line_number = module.stamps[stamp]
 
         case "BRN":
             if not len(line) == 2 or not is_token(line[1], "EXP"):
                 lt_panic("try to delete a variable without knowing how to use the burn keyword")
 
             try:
-                variables.pop(extract_expression(line[1]))
+                module.variables.pop(extract_expression(line[1]))
             except KeyError:
                 lt_panic("try to delete a variable that does not exist")
 
