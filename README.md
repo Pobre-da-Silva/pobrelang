@@ -154,7 +154,7 @@ To take a note, use the `note` keyword.
 note that this will not be executed
 ```
 
-### Stamps and sprinting
+### Stamps
 Stamps are like checkpoints you can put
 in your code to return to there later.
 To create a stamp, use the `stamp` keyword followed by its name.
@@ -166,26 +166,46 @@ stamp PobreLang/main
 
 Stamps are not useful by themselves.
 We need a way to return to them.
-To return to a stamp, use the `sprint` keyword.
+To return to a stamp, use the `dispull` keyword.
 ```
 note that this is a stamp
 stamp PobreLang/main
 	scream Hello world!
 
 	note that this will make us return to the stamp
-	sprint PobreLang/main
+	dispull PobreLang/main
 ```
 
 The code above will create an endless loop.
 This happens because we are constantly going back to
 the start of the stamp.
 
+If you need a way to quit the stamp and go back to your previous code,
+just use the `goback` keyword.
+```
+work 10/60/60
+
+tag PobreLang/hello Hello
+dispull PobreLang/fire
+scream PobreLang/hello PobreLang/world
+
+stamp PobreLang/fire
+	tag PobreLang/world world!
+	goback
+```
+
+**Note:** there is another keyword like `dispull`,
+which also calls a stamp. This keyword is deprecated, though,
+as it does not makes use of the new callstack feature.
+It should not be used in any situation and is kept in the interpreter
+for compatibility with legacy code.
+
 ### If-statements
 If-statements evaluate conditions.
 They are useful to get us back from infinite loops, for example.
 
 For an if-statement to work, we must give it an expression to evaluate
-and a stamp to sprint to in case the condition evaluates as true.
+and a stamp to dispull in case the condition evaluates as true.
 ```
 note that this is a stamp
 stamp PobreLang/main
