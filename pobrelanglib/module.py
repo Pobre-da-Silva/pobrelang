@@ -1,6 +1,6 @@
 from os import path, getcwd
 
-from pobrelanglib import lexer, parser
+from pobrelanglib import lexer, pl_parser
 
 class Module:
     name: str = None
@@ -44,8 +44,8 @@ def process_stamps(module: Module) -> None:
 
     line_tokens = lexer.lex_line(line)
 
-    if len(line_tokens) > 0 and parser.is_token(line_tokens[0], "STM"):
-        parser.parse_line(line_tokens, module)
+    if len(line_tokens) > 0 and pl_parser.is_token(line_tokens[0], "STM"):
+        pl_parser.parse_line(line_tokens, module)
 
 def set_main_module(module: Module) -> None:
     global main_module
