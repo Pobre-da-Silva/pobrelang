@@ -34,7 +34,7 @@ def create_variable(type: str, name: str, value: str, module: Module) -> None:
         logging.error(quotes.rms_quote(name))
         sys.exit()
 
-    if not name in module.variables and not module.name.startswith("std"):
+    if not name in module.variables:
         try:
             assert money - variable_cost > 0
         except AssertionError:
