@@ -195,8 +195,8 @@ stamp PobreLang/fire
 ```
 
 **Note:** there is another keyword like `dispull`,
-which also calls a stamp. This keyword is deprecated, though,
-as it does not makes use of the new callstack feature.
+which also calls a stamp. This keyword (`sprint`) is deprecated, though,
+as it does not make use of the new callstack feature.
 It should not be used in any situation and is kept in the interpreter
 for compatibility with legacy code.
 
