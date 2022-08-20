@@ -39,8 +39,7 @@ def parse():
 
         if module.line_number == len(module.file_content):
             if module == modlib.main_module:
-                print("\nNice! You did it!")
-                exit(0)
-            pl_parser.lt_panic("cause an EOF error in a language that does not have EOF error")
+                sys.exit()
+            pl_parser.lt_panic("use a module with a stamp that holds the execution")
             
 parse()
