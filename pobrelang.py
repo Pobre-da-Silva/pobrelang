@@ -34,15 +34,13 @@ modlib.current_module = modlib.main_module
 def parse():
     while True:
         module = modlib.current_module
+        module.line_number += 1
+        parse_linearly(module)
 
         if module.line_number == len(module.file_content):
             if module == modlib.main_module:
                 print("\nNice! You did it!")
                 exit(0)
-            
             pl_parser.lt_panic("cause an EOF error in a language that does not have EOF error")
-        
-        module.line_number += 1
-        parse_linearly(module)
-
+            
 parse()

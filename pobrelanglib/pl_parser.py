@@ -69,14 +69,14 @@ def goto(module: Module, line: list[str], use_callstack: bool = False) -> None:
     if stm_mod == None:
         lt_panic("sprint to a non-existing stamp")
 
+    if use_callstack: callstack.append((module, module.line_number))
+
     modlib.current_module = stm_mod
     stm_mod.line_number = stm_mod.stamps[stamp]
     
-    if use_callstack: callstack.append((module, module.line_number))
 
 def parse_line(line: list[str], module: Module) -> None:
     global money
-
     # empty line
     if len(line) < 1:
         return
