@@ -233,6 +233,32 @@ stamp PobreLang/main
 	if PobreLang/continue!=0 PobreLang/main
 ```
 
+### Modules
+PobreLang supports modules since version 1.1.0.
+Modules are a way to divide your code into small reusable chunks,
+which can also be shared with other developers.
+
+To create a module, just create a PobreLang file with the correct extension
+and then write the code you want for it.
+Usually, this is functions that might be needed elsewhere.
+
+Below is an example of a module.
+```
+stamp PobreLang/scream_hello_world
+	scream Hello world!
+	goback
+```
+
+For this example, let's say this code is stored in a `helloworld.pbr` file.
+
+After having a module, you need to import it to your existing codebase.
+To do this, use the `include` keyword.
+Note that **the file extension is omitted**!
+```
+include helloworld
+dispull PobreLang/scream_hello_world
+```
+
 ### Tips & tricks
 #### Saving on the working hours
 If you want to save some working time, try *reassigning* your variables,
