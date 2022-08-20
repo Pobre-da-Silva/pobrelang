@@ -84,10 +84,10 @@ def parse_line(line: list[str], module: Module) -> None:
     match line[0]:
         case "INC":
             if len(line) < 2:
-                lt_panic("not learn to include libraries")
+                lt_panic("not learn how to include modules")
             
             if not modlib.include_module(extract_expression(line[1])):
-                lt_panic("include a module that does not exists")
+                lt_panic("include an unexisting module")
 
         case "WRK":
             try:
