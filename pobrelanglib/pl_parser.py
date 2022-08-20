@@ -22,9 +22,11 @@ def extract_expression(token: str) -> str:
     return token.split(":", 1)[1]
 
 def parse_math(expr: str, module: Module) -> str:
-    for var, val in module.variables.items():
-        expr = expr.replace(var, val)
-
+    sorted_vars = sorted(module.variables.keys(), key=len)
+    
+    for var in reversed(sorted_vars):
+        expr = expr.replace(var, module.variables[var])
+    
     return str(float(eval(expr)))
 
 def create_variable(type: str, name: str, value: str, module: Module) -> None:
