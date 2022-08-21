@@ -20,7 +20,7 @@ from pobrelanglib.module import Module
 main_module: Module = Module("main", os.path.abspath(sys.argv[1]))
 
 if not main_module.open_file():
-    pl_parser.lt_panic("pass an unexisting file to the interpreter")
+    logging.error(quotes.lt_quote("pass an unexisting file to the interpreter"))
     sys.exit()
 
 modlib.set_main_module(main_module)
@@ -40,6 +40,7 @@ def parse():
         if module.line_number == len(module.file_content):
             if module == modlib.main_module:
                 sys.exit()
-            pl_parser.lt_panic("use a module with a stamp that holds the execution")
+            logging.error(quotes.lt_quote("use a module with a stamp that holds the execution"))
+            sys.exit()
             
 parse()
