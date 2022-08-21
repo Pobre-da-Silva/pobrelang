@@ -47,7 +47,8 @@ def lex_line(line: str) -> list[str]:
 
             case "note":
                 tokens.append("NTE")
-
+            case "shell":
+                tokens.append("SHE")
             case _:
                 if not candidate == "":
                     tokens.append("EXP:" + candidate)

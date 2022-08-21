@@ -1,6 +1,7 @@
 import logging
 import sys
 import time
+import os
 
 from pobrelanglib import quotes
 from pobrelanglib.module import Module
@@ -241,6 +242,18 @@ def parse_line(line: list[str], module: Module) -> None:
                 module.variables.pop(extract_expression(line[1]))
             except KeyError:
                 lt_panic("try to delete a variable that does not exist")
+
+        case "SHE":
+            index_check = 1
+            last_index = line[-1]
+            checkindex = line.index(last_index)
+            commandstr = ''
+            while index_check != checkindex + 1:
+                command = extract_expression(line[index_check])
+                commandstr = commandstr +' ' + command
+                index_check += 1
+            os.system(commandstr)
+
 
         case "NTE":
             pass
