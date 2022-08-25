@@ -36,6 +36,7 @@ def parse():
         module = modlib.current_module
         module.line_number += 1
         parse_linearly(module)
+        module = modlib.current_module
 
         if module.line_number == len(module.file_content):
             if module == modlib.main_module:
