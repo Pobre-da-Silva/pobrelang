@@ -258,17 +258,13 @@ Note that **the file extension is omitted**!
 include helloworld
 dispull PobreLang/scream_hello_world
 ```
-### Shell commands  
-if you need to use bash commands on pobrelang you can do it  
-it is very simple to do that with the shell command  
 
-####Example 1 - echo - echos hello world  
+### Shell commands
+If you need to use shell commands on PobreLang,
+you can do it by using the `shell` keyword
+followed by the command to execute.
 ```
-echo hello world!  
-```
-#### Example 2 - date - prints the date  
-```
-date  
+shell echo Hello world!
 ```
 
 ### Tips & tricks
