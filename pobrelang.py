@@ -36,12 +36,11 @@ def parse():
         module = modlib.current_module
         module.line_number += 1
         parse_linearly(module)
-        module = modlib.current_module
-
+        
         if module.line_number == len(module.file_content):
             if module == modlib.main_module:
                 sys.exit()
             logging.error(quotes.lt_quote("use a module with a stamp that holds the execution"))
-            sys.exit()
-            
+            sys.exit()    
+
 parse()

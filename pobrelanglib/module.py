@@ -3,17 +3,14 @@ from os import path, getcwd
 from pobrelanglib import lexer, pl_parser
 
 class Module:
-    name: str = None
-    file_name: str = None
-    file_content: list[str] = []
-
-    variables: dict[str, str] = {}
-    line_number: int = 0
-    stamps: dict[str, int] = {}
-
     def __init__(self, name, file_name):
-        self.name = name
-        self.file_name = file_name
+        self.name: str = name
+        self.file_name: str = file_name
+        self.file_content: list[str] = []
+
+        self.variables: dict[str, str] = {}
+        self.line_number: int = 0
+        self.stamps: dict[str, int] = {}
   
     def open_file(self) -> bool:
         if self.file_content == None:
@@ -69,3 +66,11 @@ def iterate_file_content(module, activity) -> None:
     while not module.line_number == len(module.file_content):
         module.line_number += 1
         activity(module)
+
+def find_stamp_module(stamp: str) -> Module | None:
+    for mod in included_modules:
+        for stm in mod.stamps:
+            if stm == stamp:
+                return mod
+    
+    return None
