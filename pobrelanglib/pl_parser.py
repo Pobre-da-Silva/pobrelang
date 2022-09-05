@@ -66,14 +66,7 @@ def goto(module: Module, line: list[str], use_callstack: bool = False) -> None:
             lt_panic(module, "try to sprint not knowing where to")
 
     stamp = extract_expression(line[1])
-    stm_mod = None
-
-    for mod in modlib.included_modules:
-        for st in mod.stamps:
-            #print(stamp +" -> " + st)
-            if st == stamp:
-                stm_mod = mod
-                break
+    stm_mod = modlib.find_stamp_module(stamp)
 
     if stm_mod == None:
         if use_callstack:
@@ -83,8 +76,9 @@ def goto(module: Module, line: list[str], use_callstack: bool = False) -> None:
 
     if use_callstack: callstack.append((module, module.line_number))
 
-    modlib.current_module = stm_mod
+    module.line_number = 0
     stm_mod.line_number = stm_mod.stamps[stamp]
+    modlib.current_module = stm_mod
     
 
 def parse_line(line: list[str], module: Module) -> None:
@@ -205,7 +199,8 @@ def parse_line(line: list[str], module: Module) -> None:
                 log_error_line(quotes.rms_quote(name))
                 sys.exit()
 
-            module.stamps[name] = module.line_number
+            if modlib.find_stamp_module(name) == None:
+                module.stamps[name] = module.line_number
 
         case "SPR":
             goto(module, line)
@@ -217,6 +212,7 @@ def parse_line(line: list[str], module: Module) -> None:
             if len(callstack) > 0:
                 item = callstack.pop()
                 mod = item[0]
+                module.line_number = 0
                 mod.line_number = item[1]
                 modlib.current_module = mod
 
